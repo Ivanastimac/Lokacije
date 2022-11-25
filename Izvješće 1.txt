@@ -1,0 +1,10 @@
+Napravljeno
+- s dhmza preuzete postaje i mjerenja tlaka zraka
+- csv datoteka s postajama i geografskim širinama i dužinama
+
+Problemi i rješenja
+- kako preuzeti podatke? scraping htmla
+- neki redovi u tablici su imali sup podelement -> xml_remove funkcija
+
+Planirano
+- položaje definirati kao prostorne točke
