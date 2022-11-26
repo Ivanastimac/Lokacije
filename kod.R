@@ -17,12 +17,44 @@ xml_remove(removed_nodes)
 
 met_zone <- met_zone %>% html_text() 
 
+#met_zone vektor sadrži imena svih postaja koje smo 
+#unijeli u OSM Nominatim tražilicu kako bi spremili koordinate mjesta
 met_zone <- str_replace_all(gsub("[\r\n]", "", met_zone), fixed(" "), "")
 
-pressure <- website %>% html_nodes("td:nth-child(6)") %>% html_text()
+#pomoćni vektor za preuzimanje mjerenja iz sata u sat
+time_node <- website %>% html_nodes(".hours-browser-v2 .hours-browser-v2__hours") %>% html_nodes('a') %>% html_attr('href')
 
-#neki tlakovi imaju * pa i to mičemo
-pressure <- str_replace_all(gsub("[*]", "", pressure), fixed(" "), "")
+#inicijalizacija liste tlakova
+pressure <- list()
+
+for (time_link in time_node){
+  #svaki sat ima drugaciji link na web stranicu koji smo izdvojili iz html-a stranice tj. <a href>  
+  #elementa pomocu kojeg ocitavamo tlak izmjeren na svim postajama za taj sat
+  link <- gsub(" ", "", paste('https:',time_link))
+  website <- read_html(link)
+  hour_pressure <- website %>% html_nodes("td:nth-child(6)") %>% html_text()
+  
+  #neki tlakovi imaju * pa i to mičemo
+  hour_pressure <- str_replace_all(gsub("[*]", "", hour_pressure), fixed(" "), "")
+  
+  #dodajemo tlak izmjeren za trenutni sat u listu tlakova
+  pressure <- append(pressure, paste(str_sub(link, start=-2), met_zone, hour_pressure))
+}
+
+#listu tlakova po satima i mjestu mjerenja pretvaramo u matricu za lakše računanje
+i = 0
+matrix <- c(0, 0, 0)
+
+for (row in pressure){
+  i <- i + 1
+  split <- str_split(row, " ")
+  matrix <- rbind(matrix, c(split[[1]][1], split[[1]][2], split[[1]][3]))
+}
+
+#dodajemo naziv stupaca i uklanjamo prvi redak matrice koji je bio pomoćni vektor
+#za inicijalizaciju matrice
+colnames(matrix) <- c("hour", "place", "pressure")
+matrix <- matrix[-c(1), ]
 
 #za koristit relativnu putanju
 setwd(getwd())

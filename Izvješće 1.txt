@@ -1,5 +1,6 @@
 Napravljeno
-- s dhmza preuzete postaje i mjerenja tlaka zraka
+- s dhmza preuzete postaje i mjerenja tlaka zraka u obliku matrice (1224, 3)
+	(za 24 sati ukupno je svakih sat vremena preuzeto mjerenje za svaku od 51 postaja)
 - csv datoteka s postajama i geografskim širinama i dužinama
 
 Problemi i rješenja
