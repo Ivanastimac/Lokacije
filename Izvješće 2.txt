@@ -2,6 +2,7 @@ Napravljeno:
 - vizualizacija postaja na mapi
 
 Problemi:
+- ako se exporta ko slika ne može se navigirati po karti -> export kao web stranica
 - puno postaja - gužva na karti -> noHide=FALSE
 
 Planirano:
