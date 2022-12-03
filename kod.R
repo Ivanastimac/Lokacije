@@ -5,6 +5,8 @@ library(rvest)
 library(stringr)
 #za funkciju xml_remove
 library(xml2)
+#za crtanje na karti
+library(leaflet)
 
 link <- 'https://meteo.hr/podaci.php?section=podaci_vrijeme&param=hrvatska1_n'
 website <- read_html(link)
@@ -59,3 +61,14 @@ matrix <- matrix[-c(1), ]
 #za koristit relativnu putanju
 setwd(getwd())
 file <- read.csv(file='./postaje.csv', header=TRUE, encoding="UTF-8")
+
+cities <- data.frame(longitude = file[, 3],
+                     latitude = file[, 2],
+                     names = file[, 1])
+
+map.point <- leaflet() %>%
+  addTiles() %>%
+  addMarkers(lng = cities$longitude, lat = cities$latitude,
+             label = cities$names, labelOptions = labelOptions(
+               noHide = FALSE))
+map.point

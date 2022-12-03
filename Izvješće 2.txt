@@ -1,0 +1,8 @@
+Napravljeno:
+- vizualizacija postaja na mapi
+
+Problemi:
+- puno postaja - gužva na karti -> noHide=FALSE
+
+Planirano:
+- nez... 
