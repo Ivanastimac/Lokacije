@@ -59,7 +59,8 @@ colnames(matrix) <- c("hour", "place", "pressure")
 matrix <- matrix[-c(1), ]
 
 #za koristit relativnu putanju
-setwd(getwd())
+#setwd(getwd())
+setwd('C:\\Users\\user\\Desktop\\Faks\\2.god\\UZNL_projekt\\Lokacije')
 file <- read.csv(file='./postaje.csv', header=TRUE, encoding="UTF-8")
 
 cities <- data.frame(longitude = file[, 3],
