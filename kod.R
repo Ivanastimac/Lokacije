@@ -7,6 +7,8 @@ library(stringr)
 library(xml2)
 #za crtanje na karti
 library(leaflet)
+# Moran.I
+library(ape)
 
 link <- 'https://meteo.hr/podaci.php?section=podaci_vrijeme&param=hrvatska1_n'
 website <- read_html(link)
@@ -60,12 +62,36 @@ matrix <- matrix[-c(1), ]
 
 #za koristit relativnu putanju
 #setwd(getwd())
-setwd('C:\\Users\\user\\Desktop\\Faks\\2.god\\UZNL_projekt\\Lokacije')
+#setwd('C:\\Users\\user\\Desktop\\Faks\\2.god\\UZNL_projekt\\Lokacije')
+setwd('C:\\Users\\ivana\\Documents\\Faks\\5. godina\\III semestar\\Usluge zasnovane na lokaciji\\Seminar\\Lokacije')
 file <- read.csv(file='./postaje.csv', header=TRUE, encoding="UTF-8")
 
 cities <- data.frame(longitude = file[, 3],
                      latitude = file[, 2],
                      names = file[, 1])
+
+# https://stats.oarc.ucla.edu/r/faq/how-can-i-calculate-morans-i-in-r/
+dists <- as.matrix(dist(cbind(cities$longitude, cities$latitude)))
+
+dists.inv <- 1/dists
+diag(dists.inv) <- 0
+
+# onoliko koliko je postaja ali nemamo uvijek isti broj
+step = 45
+for (i in seq(1, length(matrix), step)) {
+  index = i + step
+  mat = as.numeric(as.matrix(matrix[i:index, "pressure"]))
+  # nije dobro, tu je samo da ne baca error
+  # možda uzet jedno sljedeće mjerenje koje imamo ili prosjek svih mjerenja za tu postaju
+  mat[is.na(mat)] <- 0
+  print(matrix[i, "hour"])
+  print(matrix[i, "place"])
+  print(Moran.I(mat, dists.inv)) 
+}
+
+# tu sam dosta tog pobrisala, možda će trebat nešto vratit haha
+
+#print_data = paste(cities$names, matrix$pressure)
 
 map.point <- leaflet() %>%
   addTiles() %>%
