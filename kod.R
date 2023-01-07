@@ -76,6 +76,7 @@ df2 <- mutate_all(df[, 2:25], function(x) as.numeric(as.character(x)))
 # uklanjamo redove s NA vrijednostima
 df = na.omit(df2)
 
+df['mean'] = rowMeans(df, na.rm=T)
 
 #za koristit relativnu putanju
 #setwd(getwd())
@@ -103,7 +104,7 @@ cities = na.omit(cities)
 library(sf)
 s.sf <- st_read("gis_osm_places_free_1.shp")
 
-# uklanjamo redove s nazivom Centar koji se odnosi na centar gradova kako bi ostalo ime grada
+# uklanjamo redove s nazivom Centar koji se odnosi na centar gradova kako bi u bazi ostala imena gradova
 for (i in 1:8){
   s.sf <- s.sf[-c(match("Centar", s.sf$name)), ]
 }
@@ -114,15 +115,21 @@ cities2 = data.matrix(cities)
 
 sp <- data.frame()
 
+# u prostorne podatke dodati podatak prosječnog tlaka
+pressure <- c()
+
 for (i in (1:nrow(a))){
   for (j in (1:nrow(cities))){
     if (abs(a[i, 1] - cities2[j, 1]) < 0.001 
         && abs(a[i, 2] - cities2[j, 2]) < 0.001){
-      
       sp <- rbind(sp, s.sf[i, , ])
+      pressure <- rbind(pressure, df[cities2[j, 3], 'mean'])
     }
   }
 }
+
+sp <- cbind(sp, pressure)
+df <- df[, 1:24]
 
 cities2 <- cities
 
@@ -146,11 +153,13 @@ for (i in (1:nrow(df))){
 df <- df2
 
 
+
 # grafički prikaz postaja s prostornim podacima
 
 popup = paste0(
   str_to_title(sp$fclass), ": ", sp$name,  "<br/>",
-  "Population: ", sp$population,  "<br/>")
+  "Population: ", sp$population,  "<br/>",
+  "Average pressure: ", sp$pressure, "<br/>")
 
 map2 <- leaflet() %>% 
   addTiles() %>% 
@@ -204,3 +213,14 @@ for (i in 3:4){
           las=2)
 }
 
+# vizualizacija prosječnog tlaka po postajama
+
+library(RColorBrewer)
+coul <- brewer.pal(min(12, nrow(sp)), "Set3") 
+
+barplot(sp$pressure,
+        main="Average pressure", 
+        names.arg = sp$name,
+        las=2,
+        ylim=c(0,1300),
+        col = coul)
