@@ -109,7 +109,6 @@ for (i in 1:8){
   s.sf <- s.sf[-c(match("Centar", s.sf$name)), ]
 }
 
-
 a = st_coordinates(s.sf$geometry) 
 cities2 = data.matrix(cities)
 
@@ -153,7 +152,6 @@ for (i in (1:nrow(df))){
 df <- df2
 
 
-
 # grafički prikaz postaja s prostornim podacima
 
 popup = paste0(
@@ -168,6 +166,7 @@ map2 <- leaflet() %>%
     label = lapply(popup, htmltools::HTML) 
   )
 map2
+
 
 # priprema podataka za računjanje Moranovih koeficijenata
 
@@ -199,7 +198,7 @@ barplot(as.matrix(rbind(moran_coefficient[2, 1:24],
         beside = TRUE,
         col=colors[1:2],
         las=2
-        )
+)
 legend("topleft",
        c("Expected","Observed"),
        fill = c("gray","pink"))
@@ -224,3 +223,4 @@ barplot(sp$pressure,
         las=2,
         ylim=c(0,1300),
         col = coul)
+
